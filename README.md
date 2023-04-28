@@ -1,5 +1,5 @@
 # BotTG-cosmetics_color_chooser
-<h3>Telegram bot, hosted on PythonAnywhere </h3>
+<h3>Telegram bot for choosing the color of cosmetics, hosted on PythonAnywhere </h3>
 
 # Python Anywhere links:
 
