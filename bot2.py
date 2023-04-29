@@ -1,6 +1,7 @@
 import telegram
 import random
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+import sqlite3
 
 # Токен бота Telegram
 bot_token = '6087042741:AAFW679O1pAT1KVB1Tv44KziLI480rox7kk'
@@ -10,13 +11,49 @@ bot = telegram.Bot(token=bot_token)
 
 # Список команд бота
 commands = [
+    telegram.BotCommand('about', 'Что я такое....'),
     telegram.BotCommand('eye_shadow', 'Выбрать цвет тенюшек'),
     telegram.BotCommand('eyelash', 'Выбрать цветную тушь'),
-    telegram.BotCommand('liner', 'Выбрать подводку')
+    telegram.BotCommand('liner', 'Выбрать подводку'),
+    telegram.BotCommand('joke', 'Получить шутку'),
 ]
 
 # Установка команд бота
 bot.set_my_commands(commands)
+
+
+def about(update, context):
+    context.bot.send_message(chat_id=update.message.chat_id,
+                             text="Приветик, дорогуша!!!☺️❤️✨\n\nЯ - бот, который поможет тебе выбрать цвет косметики "
+                                  "на сегодня. Я работаю с помощью сил рандома, так что использовать меня повседневно "
+                                  "- странная затея. Зато я отлично помогу, если ты хочешь выполнить "
+                                  "челлендж!\n\nЕсть одно но - в моём распоряжении <b>ограниченный набор</b> цветов, "
+                                  "так как я был заточен под одного конкретного человечка.\n\nЕщё я умею присылать "
+                                  "анекдоты, но они весьма специфичные, странные и без нормальных знаков "
+                                  "препинания.....\n\nНаслаждайся!\n\nПо всем вопросам к создателю - "
+                                  "<b>@solidus66</b>",
+                             parse_mode='HTML')
+
+
+def get_anekdote():
+    connection = sqlite3.connect('anekdot.db')
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM anekdot ORDER BY RANDOM() LIMIT 1")
+    anekdote_row = cursor.fetchone()
+    connection.close()
+    if anekdote_row:
+        anekdote = anekdote_row[1]
+    else:
+        anekdote = "К сожалению, в базе данных пока нет анекдотов"
+    return anekdote
+
+
+# Функция отправки выбранного анекдота
+def send_anekdote(update, context):
+    anekdote = get_anekdote()
+    context.bot.send_message(chat_id=update.effective_chat.id, text=anekdote)
+    # context.bot.send_message(chat_id=update.message.chat_id,
+    #             text=f"Функция <b>пока что</b> не работает", parse_mode='HTML')
 
 
 def eye_shadow_color(update, context):
@@ -144,9 +181,11 @@ updater = Updater(bot_token, use_context=True)
 dispatcher = updater.dispatcher
 
 # Регистрация функций для обработки команд
+dispatcher.add_handler(CommandHandler('about', about))
 dispatcher.add_handler(CommandHandler('eye_shadow', eye_shadow_color))
 dispatcher.add_handler(CommandHandler('eyelash', eyelash_color))
 dispatcher.add_handler(CommandHandler('liner', liner_color))
+dispatcher.add_handler(CommandHandler('joke', send_anekdote))
 
 # Запуск бота
 updater.start_polling()
