@@ -1,15 +1,14 @@
 import telegram
 import random
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+import os
+from webserver import keep_alive
+from telegram.ext import Updater, CommandHandler
 import sqlite3
 
-# Токен бота Telegram
-bot_token = '6087042741:AAFW679O1pAT1KVB1Tv44KziLI480rox7kk'
+my_secret = os.environ['bot_token']
 
-# Создание экземпляра бота
-bot = telegram.Bot(token=bot_token)
+bot = telegram.Bot(token=my_secret)
 
-# Список команд бота
 commands = [
     telegram.BotCommand('about', 'Что я такое....'),
     telegram.BotCommand('eye_shadow', 'Выбрать цвет тенюшек'),
@@ -18,9 +17,7 @@ commands = [
     telegram.BotCommand('joke', 'Получить шутку'),
 ]
 
-# Установка команд бота
 bot.set_my_commands(commands)
-
 
 def about(update, context):
     context.bot.send_message(chat_id=update.message.chat_id,
@@ -48,12 +45,9 @@ def get_anekdote():
     return anekdote
 
 
-# Функция отправки выбранного анекдота
 def send_anekdote(update, context):
     anekdote = get_anekdote()
     context.bot.send_message(chat_id=update.effective_chat.id, text=anekdote)
-    # context.bot.send_message(chat_id=update.message.chat_id,
-    #             text=f"Функция <b>пока что</b> не работает", parse_mode='HTML')
 
 
 def eye_shadow_color(update, context):
@@ -176,17 +170,15 @@ def liner_color(update, context):
                              text=f"Используй сегодня <b>{chosen_color}</b> подводку{chosen_appeal}", parse_mode='HTML')
 
 
-# Создание объекта для обработки сообщений
-updater = Updater(bot_token, use_context=True)
+updater = Updater(my_secret, use_context=True)
 dispatcher = updater.dispatcher
 
-# Регистрация функций для обработки команд
 dispatcher.add_handler(CommandHandler('about', about))
 dispatcher.add_handler(CommandHandler('eye_shadow', eye_shadow_color))
 dispatcher.add_handler(CommandHandler('eyelash', eyelash_color))
 dispatcher.add_handler(CommandHandler('liner', liner_color))
 dispatcher.add_handler(CommandHandler('joke', send_anekdote))
 
-# Запуск бота
+keep_alive()
 updater.start_polling()
 updater.idle()
