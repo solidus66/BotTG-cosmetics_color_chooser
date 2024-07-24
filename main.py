@@ -3,9 +3,14 @@ from telegram.ext import Updater, CommandHandler
 import random
 from webserver import keep_alive
 
-my_secret =''
+import os
+from dotenv import load_dotenv
 
-bot = telegram.Bot(token=my_secret)
+load_dotenv()
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+
+bot = telegram.Bot(token=BOT_TOKEN)
 
 commands = [
     # telegram.BotCommand('about', 'Что я такое....'),
@@ -285,7 +290,7 @@ def sequins_color(update, context):
         parse_mode='HTML')
 
 
-updater = Updater(my_secret, use_context=True)
+updater = Updater(BOT_TOKEN, use_context=True)
 dispatcher = updater.dispatcher
 
 # dispatcher.add_handler(CommandHandler('about', about))
