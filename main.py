@@ -306,6 +306,5 @@ server_thread.start()
 
 Timer(60, keep_alive).start()
 
-keep_alive()
 updater.start_polling()
 updater.idle()
