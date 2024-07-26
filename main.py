@@ -1,7 +1,8 @@
 import telegram
 from telegram.ext import Updater, CommandHandler
 import random
-from webserver import keep_alive
+from webserver import run, keep_alive
+from threading import Thread, Timer
 
 import os
 from dotenv import load_dotenv
@@ -90,7 +91,7 @@ def eye_shadow_color(update, context):
             '18 (TEDDY)'
         ],
         'NYX(блин, отзеркалить бы) Off Tropic':
-        ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
         'Revolution Tasty Avocado': [
             '1 (SMASH)', '2 (TOAST)', '3 (AVO)', '4 (CALIFORNIA)',
             '5 (SMOOTHIE)', '6 (HALF)', '7 (HASS)', '8 (GUACAMOLE)',
@@ -103,7 +104,7 @@ def eye_shadow_color(update, context):
             '13', '14', '15'
         ],
         'Nude EVELINE':
-        ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
         'Beauty Glazed Color Shades': [
             '1 на первом развороте (DREAM)',
             '2 на первом развороте (IVORY)',
@@ -179,9 +180,9 @@ def eye_shadow_color(update, context):
             '24 на третьем развороте (BLUE BLACK)',
         ],
         'VIVIENNE SABO harmonia':
-        ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
         'HOJO':
-        ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
     }
     chosen_palette = random.choice(list(palettes.keys()))
     colors = palettes[chosen_palette]
@@ -299,6 +300,11 @@ dispatcher.add_handler(CommandHandler('eyelash', eyelash_color))
 dispatcher.add_handler(CommandHandler('liner', liner_color))
 dispatcher.add_handler(CommandHandler('sequins', sequins_color))
 # dispatcher.add_handler(CommandHandler('joke', send_anekdote))
+
+server_thread = Thread(target=run)
+server_thread.start()
+
+Timer(60, keep_alive).start()
 
 keep_alive()
 updater.start_polling()
