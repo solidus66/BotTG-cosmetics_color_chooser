@@ -17,7 +17,7 @@ def run():
 
 
 def keep_alive():
-    url = "https://bottg-howinoplanetyanareyou.onrender.com"
+    url = "https://bottg-cosmetics-color-chooser.onrender.com"
 
     while True:
         try:
